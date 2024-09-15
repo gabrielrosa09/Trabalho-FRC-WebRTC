@@ -102,6 +102,26 @@ video {
   border: 1px solid #bdc3c7;
   border-radius: 25px;
   width: 60%;
+  outline: none; /* Remove o outline padrão */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.name-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.name-label {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
 }
 
 footer {

@@ -1,7 +1,14 @@
 import './style.css'
 
 const firebaseConfig = {
-  /*config do firebase*/
+  apiKey: "AIzaSyAPqmjHQYEoKioRLNyvgllgyMKRR9ezhsI",
+  authDomain: "projeto-rtc-frc.firebaseapp.com",
+  databaseURL: "https://projeto-rtc-frc-default-rtdb.firebaseio.com",
+  projectId: "projeto-rtc-frc",
+  storageBucket: "projeto-rtc-frc.appspot.com",
+  messagingSenderId: "85555353655",
+  appId: "1:85555353655:web:b9c7db55d9c599119ac7b2",
+  measurementId: "G-QDLRVFM987"
 };
 
 if (!firebase.apps.length) {
@@ -99,3 +106,77 @@ callButton.onclick = async () => {
 };
 
 /**************** parte da ana vai aqui ******************/
+answerButton.onclick = async () => {
+  const callId = callInput.value;
+  const callDoc = firestore.collection('calls').doc(callId);
+  const answerCandidates = callDoc.collection('answerCandidates');
+  const offerCandidates = callDoc.collection('offerCandidates');
+
+  pc.onicecandidate = (event) => {
+    event.candidate && answerCandidates.add(event.candidate.toJSON());
+  };
+
+  const callData = (await callDoc.get()).data();
+
+  const offerDescription = callData.offer;
+  await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
+
+  const answerDescription = await pc.createAnswer();
+  await pc.setLocalDescription(answerDescription);
+
+  const answer = {
+    type: answerDescription.type,
+    sdp: answerDescription.sdp,
+  };
+
+  await callDoc.update({ answer });
+
+  offerCandidates.onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      console.log(change);
+      if (change.type === 'added') {
+        let data = change.doc.data();
+        pc.addIceCandidate(new RTCIceCandidate(data));
+      }
+    });
+  });
+};
+
+/**************** Aqui é a parte do chat ******************/
+
+const chatBox = document.getElementById('chatBox');
+const chatInput = document.getElementById('chatInput');
+const sendButton = document.getElementById('sendButton');
+const nameInput = document.getElementById('nameInput');
+
+const chatCollection = firestore.collection('chats');
+
+sendButton.onclick = async () => {
+  const userName = nameInput.value.trim();  // Captura o nome do input
+  const message = chatInput.value.trim();   // Captura a mensagem do input
+
+  if (userName && message) {
+
+    await chatCollection.add({
+      text: message,
+      name: userName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    chatInput.value = '';  
+  } else {
+    alert('Por favor, digite um nome e uma mensagem antes de enviar.');
+  }
+};
+
+chatCollection
+  .orderBy('timestamp')
+  .onSnapshot((snapshot) => {
+    chatBox.innerHTML = ''; 
+    snapshot.forEach((doc) => {
+      const messageData = doc.data();
+      const messageElement = document.createElement('p');
+      messageElement.innerHTML = `<span class="sender">${messageData.name}:</span> ${messageData.text}`;
+      chatBox.appendChild(messageElement); 
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
