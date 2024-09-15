@@ -180,3 +180,31 @@ chatCollection
     });
     chatBox.scrollTop = chatBox.scrollHeight;
   });
+
+  hangupButton.onclick = async () => {
+    // Encerra a conexão
+    pc.close();
+  
+    // Limpa o stream de vídeo local e remoto
+    webcamVideo.srcObject = null;
+    remoteVideo.srcObject = null;
+  
+    // Limpa o conteúdo do chat
+    chatBox.innerHTML = '';
+  
+    // Apaga a coleção de chats do Firestore
+    const chatCollection = firestore.collection('chats');
+    const querySnapshot = await chatCollection.get();
+    const batch = firestore.batch();
+    
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    
+    await batch.commit();
+  
+    // Desativa os botões
+    callButton.disabled = true;
+    answerButton.disabled = true;
+    hangupButton.disabled = true;
+  };
