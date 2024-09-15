@@ -1,43 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebRTC Demo</title>
-  </head>
-  <body>
-    <h2>1. Start your Webcam</h2>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redes UnB</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header>
+    <img src="img/unb.png" alt="Logo da UNB" class="logo">
+  </header>
+  <div class="container">
+    <h1>Redes UnB</h1>
+
+    <h2>1. Inicie sua webcam</h2>
     <div class="videos">
-      <span>
-        <h3>Local Stream</h3>
+      <div class="video-container">
+        <h3>Transmissão Local</h3>
         <video id="webcamVideo" autoplay playsinline></video>
-      </span>
-      <span>
-        <h3>Remote Stream</h3>
+      </div>
+      <div class="video-container">
+        <h3>Transmissão Remota</h3>
         <video id="remoteVideo" autoplay playsinline></video>
-      </span>
-
-
+      </div>
     </div>
-
-    <button id="webcamButton">Start webcam</button>
-    <h2>2. Create a new Call</h2>
-    <button id="callButton" disabled>Create Call (offer)</button>
-
-    <h2>3. Join a Call</h2>
-    <p>Answer the call from a different browser window or device</p>
     
-    <input id="callInput" />
-    <button id="answerButton" disabled>Answer</button>
+    <button id="webcamButton" class="btn">Iniciar Webcam</button>
+    
+    <h2>Chat</h2>
+    <div class="chat-container">
+      <div id="chatBox" class="chat-box"></div>
+      <div class="chat-controls">
+        <input id="chatInput" class="input" type="text" placeholder="Digite sua mensagem..." />
+        <button id="sendButton" class="btn">Enviar</button>
+        <button id="raiseHandButton" class="btn raise-hand">Levantar a Mão ✋</button>
+      </div>
+    </div>
+    
+    <h2>2. Criar uma nova chamada</h2>
+    <button id="callButton" class="btn" disabled>Criar Chamada</button>
 
-    <h2>4. Hangup</h2>
+    <h2>3. Participe de uma chamada</h2>
+    <p>Atenda a chamada de uma janela de navegador ou dispositivo diferente</p>
 
-    <button id="hangupButton" disabled>Hangup</button>
+    <input id="callInput" class="input" placeholder="Insira o ID da chamada" />
+    <button id="answerButton" class="btn" disabled>Atender</button>
 
-    <script type="module" src="/main.js"></script>
+    <h2>4. Encerrar Chamada</h2>
+    <button id="hangupButton" class="btn" disabled>Encerrar</button>
 
-  </body>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Universidade de Brasília. Todos os direitos reservados.</p>
+  </footer>
+
+  <script type="module" src="/main.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <!-- Script para funcionamento do chat -->
+  <script src="chat.js"></script>
+</body>
+
 </html>
