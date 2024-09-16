@@ -1,5 +1,14 @@
 import './style.css'
 
+const firebaseConfig = {              
+  apiKey: "AIzaSyC1a6Acicl9uW4gr4e_0hd5MkrCSswO_Os",                                    
+  authDomain: "webrtc-frc-2024.firebaseapp.com",                                                      
+  projectId: "webrtc-frc-2024",                                                                       
+  storageBucket: "webrtc-frc-2024.appspot.com",                                                       
+  messagingSenderId: "634478244642",          
+  appId: "1:634478244642:web:199d7233f214861e2c6b7b"
+};      
+/*
 const firebaseConfig = {
   apiKey: "AIzaSyAPqmjHQYEoKioRLNyvgllgyMKRR9ezhsI",
   authDomain: "projeto-rtc-frc.firebaseapp.com",
@@ -10,7 +19,7 @@ const firebaseConfig = {
   appId: "1:85555353655:web:b9c7db55d9c599119ac7b2",
   measurementId: "G-QDLRVFM987"
 };
-
+*/
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -38,13 +47,15 @@ const answerButton = document.getElementById('answerButton');
 const remoteVideo = document.getElementById('remoteVideo');
 const hangupButton = document.getElementById('hangupButton');
 
+const senders = [];
+
 webcamButton.onclick = async () => {
   localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   remoteStream = new MediaStream();
 
   // Push tracks from local stream to peer connection
   localStream.getTracks().forEach((track) => {
-    pc.addTrack(track, localStream);
+    senders.push(pc.addTrack(track, localStream));
   });
 
   // Pull tracks from remote stream, add to video stream
@@ -225,3 +236,14 @@ chatCollection
     answerButton.disabled = true;
     hangupButton.disabled = true;
   };
+
+
+screenshareButton.onclick = async () => {
+    localStream = navigator.mediaDevices.getDisplayMedia({ cursor: true }).then(stream => {
+        const screenTrack = stream.getTracks()[0];
+        senders.find(sender => sender.track.kind === 'video').replaceTrack(screenTrack);
+        screenTrack.onended = function() {
+            senders.find(sender => sender.track.kind === 'video').replaceTrack(localStream.getTracks()[1]);
+        }
+    })
+}
