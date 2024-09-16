@@ -147,6 +147,24 @@ const chatBox = document.getElementById('chatBox');
 const chatInput = document.getElementById('chatInput');
 const sendButton = document.getElementById('sendButton');
 const nameInput = document.getElementById('nameInput');
+const raiseHandButton = document.getElementById('raiseHandButton');
+
+raiseHandButton.onclick = async () => {
+  const userName = nameInput.value.trim();
+
+  if (userName) {
+    await chatCollection.add({
+      text: `${userName} levantou a mão ✋`,
+      name: 'Sistema',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+    alert(`${userName}, você levantou a mão!`);
+  } else {
+    alert('Por favor, insira seu nome antes de levantar a mão.');
+  }
+};
+
 
 const chatCollection = firestore.collection('chats');
 
